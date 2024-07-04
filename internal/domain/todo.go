@@ -1,4 +1,4 @@
-package todo
+package domain
 
 type TodoList struct {
 	Id          int    `json:"id"`
