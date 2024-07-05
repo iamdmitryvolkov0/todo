@@ -6,6 +6,14 @@ import (
 	_ "github.com/lib/pq"
 )
 
+const (
+	UsersTable      = "users"
+	TodoListsTable  = "todo_lists"
+	UsersListsTable = "users_lists"
+	TodoItemsTable  = "todo_items"
+	ListsItemsTable = "lists_items"
+)
+
 type Config struct {
 	Host     string
 	Port     string
