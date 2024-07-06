@@ -27,3 +27,15 @@ func (r *Auth) CreateUser(user domain.User) (int, error) {
 	}
 	return id, nil
 }
+
+func (r *Auth) GetUser(username, password string) (domain.User, error) {
+	var user domain.User
+	query := fmt.Sprintf(
+		"SELECT id FROM %s WHERE username = $1 AND password_hash = $2",
+		storage.UsersTable,
+	)
+
+	err := r.db.Get(&user, query, username, password)
+
+	return user, err
+}
