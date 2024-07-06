@@ -5,6 +5,14 @@ import (
 	"todo/internal/domain"
 )
 
+const (
+	UsersTable      = "users"
+	TodoListsTable  = "todo_lists"
+	UsersListsTable = "users_lists"
+	TodoItemsTable  = "todo_items"
+	ListsItemsTable = "lists_items"
+)
+
 type Authorization interface {
 	CreateUser(user domain.User) (int, error)
 	GetUser(username, password string) (domain.User, error)
