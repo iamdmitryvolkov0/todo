@@ -2,10 +2,10 @@ services:
   go:
     build: ./
     container_name: todo
-    command:
-      - ./main
     ports:
       - 8000:8000
+    volumes:
+      - ./:/app
     depends_on:
       - db
 

@@ -1,14 +1,18 @@
-FROM golang:1.21-alpine AS builder
+FROM golang:1.22.5-alpine AS builder
 
 WORKDIR /app
 
-RUN go version
-ENV GOPATH=/
+RUN go install github.com/air-verse/air@latest
 
 # dependencies
-COPY ./ ./
+COPY go.* ./
 RUN go mod download
 
+COPY . .
+
 # build
-RUN go build -o main ./cmd/main.go
-CMD ["./main"]
+RUN CGO_ENABLED=0 GOOS=linux go build -o main ./cmd/main.go
+
+EXPOSE 8000
+
+CMD ["air", "-c", ".air.toml"]
