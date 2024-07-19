@@ -11,8 +11,6 @@ RUN go mod download
 COPY . .
 
 # build
-RUN CGO_ENABLED=0 GOOS=linux go build -o main ./cmd/main.go
-
-EXPOSE 8000
+RUN CGO_ENABLED=0 GOOS=linux go build -o ../tmp/main ./cmd/main.go
 
 CMD ["air", "-c", ".air.toml"]
