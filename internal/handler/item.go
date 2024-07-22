@@ -6,11 +6,11 @@ func (h *Handler) createItem(c *gin.Context) {
 
 }
 
-func (h *Handler) getAllItems(c *gin.Context) {
+func (h *Handler) allItems(c *gin.Context) {
 
 }
 
-func (h *Handler) getItem(c *gin.Context) {
+func (h *Handler) item(c *gin.Context) {
 
 }
 

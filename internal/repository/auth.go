@@ -6,15 +6,15 @@ import (
 	"todo/internal/domain"
 )
 
-type Auth struct {
+type AuthRepository struct {
 	db *sqlx.DB
 }
 
-func NewAuthRepository(db *sqlx.DB) *Auth {
-	return &Auth{db: db}
+func NewAuthRepository(db *sqlx.DB) *AuthRepository {
+	return &AuthRepository{db: db}
 }
 
-func (r *Auth) CreateUser(user domain.User) (int, error) {
+func (r *AuthRepository) CreateUser(user domain.User) (int, error) {
 	var id int
 	query := fmt.Sprintf(
 		"INSERT INTO %s (name, username, password_hash) values ($1, $2, $3) RETURNING id",
@@ -27,7 +27,7 @@ func (r *Auth) CreateUser(user domain.User) (int, error) {
 	return id, nil
 }
 
-func (r *Auth) GetUser(username, password string) (domain.User, error) {
+func (r *AuthRepository) GetUser(username, password string) (domain.User, error) {
 	var user domain.User
 	query := fmt.Sprintf(
 		"SELECT id FROM %s WHERE username = $1 AND password_hash = $2",
