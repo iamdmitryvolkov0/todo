@@ -22,6 +22,7 @@ func (h *Handler) createList(c *gin.Context) {
 	id, err := h.services.TodoList.Create(userID, input)
 	if err != nil {
 		newErrorResponse(c, http.StatusInternalServerError, err.Error())
+		return
 	}
 
 	c.JSON(http.StatusOK, map[string]interface{}{
@@ -42,6 +43,7 @@ func (h *Handler) allLists(c *gin.Context) {
 	lists, err := h.services.TodoList.All(userID)
 	if err != nil {
 		newErrorResponse(c, http.StatusInternalServerError, err.Error())
+		return
 	}
 
 	c.JSON(http.StatusOK, allListsResponse{
@@ -58,18 +60,44 @@ func (h *Handler) listById(c *gin.Context) {
 	listID, err := strconv.Atoi(c.Param("id"))
 	if err != nil {
 		newErrorResponse(c, http.StatusBadRequest, "invalid id")
+		return
 	}
 
 	list, err := h.services.TodoList.ListByID(userID, listID)
 	if err != nil {
 		newErrorResponse(c, http.StatusInternalServerError, err.Error())
+		return
 	}
 
 	c.JSON(http.StatusOK, list)
 }
 
 func (h *Handler) updateList(c *gin.Context) {
+	userID, err := h.getUserId(c)
+	if err != nil {
+		return
+	}
 
+	listID, err := strconv.Atoi(c.Param("id"))
+	if err != nil {
+		newErrorResponse(c, http.StatusBadRequest, "invalid id")
+	}
+
+	var input domain.UpdateListInput
+	if err := c.BindJSON(&input); err != nil {
+		newErrorResponse(c, http.StatusBadRequest, err.Error())
+		return
+	}
+
+	err = h.services.TodoList.Update(userID, listID, input)
+	if err != nil {
+		newErrorResponse(c, http.StatusInternalServerError, err.Error())
+		return
+	}
+
+	c.JSON(http.StatusOK, statusResponse{
+		Status: "updated",
+	})
 }
 
 func (h *Handler) deleteList(c *gin.Context) {
@@ -81,14 +109,16 @@ func (h *Handler) deleteList(c *gin.Context) {
 	listID, err := strconv.Atoi(c.Param("id"))
 	if err != nil {
 		newErrorResponse(c, http.StatusBadRequest, "invalid id")
+		return
 	}
 
 	err = h.services.TodoList.Delete(userID, listID)
 	if err != nil {
 		newErrorResponse(c, http.StatusInternalServerError, err.Error())
+		return
 	}
 
 	c.JSON(http.StatusOK, statusResponse{
-		Status: "ok",
+		Status: "deleted",
 	})
 }

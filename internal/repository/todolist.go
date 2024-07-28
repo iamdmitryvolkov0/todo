@@ -3,6 +3,8 @@ package repository
 import (
 	"fmt"
 	"github.com/jmoiron/sqlx"
+	"github.com/sirupsen/logrus"
+	"strings"
 	"todo/internal/domain"
 )
 
@@ -66,6 +68,37 @@ func (r *TodoListRepository) ListByID(userID int, listID int) (domain.TodoList, 
 	)
 	err := r.db.Get(&list, query, userID, listID)
 	return list, err
+}
+
+func (r *TodoListRepository) Update(userID int, listID int, input domain.UpdateListInput) error {
+	setValues := make([]string, 0)
+	args := make([]interface{}, 0)
+	argID := 1
+
+	if input.Title != nil {
+		setValues = append(setValues, fmt.Sprintf("title=$%d", argID))
+		args = append(args, *input.Title)
+		argID++
+	}
+
+	if input.Description != nil {
+		setValues = append(setValues, fmt.Sprintf("description=$%d", argID))
+		args = append(args, *input.Description)
+		argID++
+	}
+
+	setQuery := strings.Join(setValues, ",")
+	query := fmt.Sprintf(
+		"UPDATE %s tl SET %s FROM %s ul WHERE tl.id = ul.list_id AND ul.list_id=$%d AND ul.user_id=$%d",
+		TodoListsTable, setQuery, UsersListsTable, argID, argID+1,
+	)
+
+	args = append(args, listID, userID)
+	logrus.Debugf("Update query: %s", query)
+	logrus.Debugf("Update args: %s", args)
+
+	_, err := r.db.Exec(query, args...)
+	return err
 }
 
 func (r *TodoListRepository) Delete(userID int, listID int) error {
