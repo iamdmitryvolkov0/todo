@@ -1,7 +1,7 @@
 services:
   go:
     build: ./
-    container_name: todo
+    container_name: app
     ports:
       - 8000:8000
     volumes:
